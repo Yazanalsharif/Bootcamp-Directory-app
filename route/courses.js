@@ -15,6 +15,9 @@ const advanceResults = require('../middlewares/advanceResult');
 
 const router = express.Router({ mergeParams: true });
 
+//called functions from auth middleware
+const { protector, authorized } = require('../middlewares/auth');
+
 router
   .route('/')
   .get(
@@ -24,8 +27,12 @@ router
     }),
     getCourses
   )
-  .post(createCourse);
+  .post(protector, authorized('publisher', 'admin'), createCourse);
 
-router.route('/:id').get(getCourse).delete(deleteCourse).put(updateCourse);
+router
+  .route('/:id')
+  .get(getCourse)
+  .delete(protector, authorized('publisher', 'admin'), deleteCourse)
+  .put(protector, authorized('publisher', 'admin'), updateCourse);
 
 module.exports = router;

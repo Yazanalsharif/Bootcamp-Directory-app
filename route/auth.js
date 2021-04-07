@@ -1,13 +1,15 @@
 const express = require('express');
-
-//bring auth controller
-const { register, login } = require('../controller/auth');
+const { register, login, getMe } = require('../controller/auth.js');
 
 const router = express.Router();
 
-//route register endpoint
+//pring function from middlewares
+const { protector } = require('../middlewares/auth');
+
 router.route('/register').post(register);
-//router login endpoint
+
 router.route('/login').post(login);
+
+router.route('/me').get(protector, getMe);
 
 module.exports = router;

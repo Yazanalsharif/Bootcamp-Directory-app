@@ -9,7 +9,9 @@ const Bootcamp = require('../models/bootcamps');
 //access          Public
 const getCourses = asyncHandler(async (req, res, next) => {
   if (req.params.bootcampId) {
-    const courses = Course.find({ bootcamp: req.params.bootcampId }).populate({
+    const courses = await Course.find({
+      bootcamp: req.params.bootcampId
+    }).populate({
       path: 'bootcamp',
       select: 'name'
     });

@@ -5,12 +5,27 @@ const bootcampController = require('../controller/bootcamps');
 const courses = require('./courses');
 
 const router = express.Router();
+
+//called functions from auth middleware
+const { protector, authorized } = require('../middlewares/auth');
+
 //bring the advance middle ware in bootcamp route
 const advanceResult = require('../middlewares/advanceResult');
+
 // bring bootcamp model to use it in middle ware
 const Bootcamp = require('../models/bootcamps');
+
 // re-route into other resource routes
 router.use('/:bootcampId/courses', courses);
+
+//route to upload the avater to the bootcamp
+router
+  .route('/upload/:id')
+  .put(
+    protector,
+    authorized('publisher', 'admin'),
+    bootcampController.uploadBootcampAvater
+  );
 
 router
   .route('/radius/:zipcode/:distance')
@@ -19,14 +34,24 @@ router
 router
   .route('/')
   .get(advanceResult(Bootcamp, 'courses'), bootcampController.getBootcamps)
-  .post(bootcampController.createBootcamp);
+  .post(
+    protector,
+    authorized('publisher', 'admin'),
+    bootcampController.createBootcamp
+  );
 
 router
   .route('/:id')
   .get(bootcampController.getBootcamp)
-  .put(bootcampController.updateBootcamp)
-  .delete(bootcampController.deleteBootcamp);
-
-router.route('/upload/:id').put(bootcampController.uploadBootcampAvater);
+  .put(
+    protector,
+    authorized('publisher', 'admin'),
+    bootcampController.updateBootcamp
+  )
+  .delete(
+    protector,
+    authorized('publisher', 'admin'),
+    bootcampController.deleteBootcamp
+  );
 
 module.exports = router;

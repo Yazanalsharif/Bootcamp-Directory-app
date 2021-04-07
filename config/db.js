@@ -5,7 +5,7 @@ const connection = async () => {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: false,
-    useCreateIndex: true,
+    useCreateIndex: true
   });
 
   console.log(

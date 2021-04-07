@@ -41,6 +41,16 @@ const getBootcamp = async (req, res, next) => {
 //@access             private
 const createBootcamp = async (req, res, next) => {
   try {
+    req.body.user = req.user.id;
+    //the user must be admin to create alot of bootcamps ,publisher could create 1 bootcamp and user could not
+    const publishedBootcamp = await Bootcamp.findOne({
+      user: req.body.user
+    });
+    console.log(publishedBootcamp);
+    //if this user is publisher and belong him bootcamp he could't make another one
+    if (publishedBootcamp && req.user.role !== 'admin') {
+      return next(new ErrorHandler('The user already has the bootcamp', 400));
+    }
     const bootcamp = await Bootcamp.create(req.body);
     res.status(201).json({ success: true, bootcamp });
   } catch (error) {

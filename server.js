@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/error');
 const chalk = require('chalk');
 const multer = require('multer');
+const cookieParser = require('cookie-parser');
 const handlingFile = require('./utils/fileFilterImage');
 //route files
 const bootcamps = require('./route/bootcamps');
@@ -20,7 +21,8 @@ const app = express();
 
 //setup json request
 app.use(express.json());
-
+//setup cookie parser
+app.use(cookieParser());
 //@desc       get the logger data from the user in dev env
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));

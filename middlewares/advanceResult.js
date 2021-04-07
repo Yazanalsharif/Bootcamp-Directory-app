@@ -1,15 +1,16 @@
 const advanceResult = (model, populate) => async (req, res, next) => {
   //clone query string to anothre object
   const queryStringClone = { ...req.query };
+  //test the courses routes
 
-  //remove fields becouse I don't be matched with decouments
+  //remove fields becouse it does't must match with decouments
   const removeFields = ['select', 'sort', 'limit', 'page'];
-
+  console.log(queryStringClone);
   //loops for remove the fields
   removeFields.forEach((param) => {
     delete queryStringClone[param];
   });
-
+  console.log(queryStringClone);
   //stringify the json to string to make some edits
   let queryStr = JSON.stringify(queryStringClone);
 
@@ -33,6 +34,7 @@ const advanceResult = (model, populate) => async (req, res, next) => {
   } else {
     query.sort('-createdAt');
   }
+
   //skip the document and limit the data came (pagination)
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 10;
@@ -51,10 +53,13 @@ const advanceResult = (model, populate) => async (req, res, next) => {
 
   //get data using query
   const results = await query;
+
   //create paginaiton object to display
   const pagination = {};
+
   //handle local page
   pagination.localPage = page;
+
   //handle previous pages
   if (startIndex > 0) {
     pagination.previous = {

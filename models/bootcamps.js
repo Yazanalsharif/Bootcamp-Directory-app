@@ -100,6 +100,11 @@ const BootCampSchema = new mongoose.Schema(
     },
     avgCost: {
       type: Number
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true
     }
   },
   {
