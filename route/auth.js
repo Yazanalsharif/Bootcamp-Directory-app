@@ -1,5 +1,11 @@
 const express = require('express');
-const { register, login, getMe } = require('../controller/auth.js');
+const {
+  register,
+  login,
+  getMe,
+  forgetPassword,
+  updatePassword
+} = require('../controller/auth.js');
 
 const router = express.Router();
 
@@ -11,5 +17,9 @@ router.route('/register').post(register);
 router.route('/login').post(login);
 
 router.route('/me').get(protector, getMe);
+
+router.route('/forgetPassword').post(forgetPassword);
+
+router.route('/resetPassword/:token').put(updatePassword);
 
 module.exports = router;

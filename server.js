@@ -12,6 +12,7 @@ const handlingFile = require('./utils/fileFilterImage');
 const bootcamps = require('./route/bootcamps');
 const courses = require('./route/courses');
 const auth = require('./route/auth');
+const users = require('./route/users');
 //load env variables
 dotenv.config({ path: './config/config.env' });
 connectDB();
@@ -55,7 +56,9 @@ app.use(upload.single('avater'));
 //Mount routes
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
-app.use('/api/v1/users', auth);
+app.use('/api/v1/auth', auth);
+//put the valide url
+app.use('/api/v1/users', users);
 //error handler must be after the routes.
 app.use(errorHandler);
 const port = process.env.PORT || 3000;

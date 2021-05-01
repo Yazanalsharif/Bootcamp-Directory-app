@@ -46,12 +46,14 @@ const createBootcamp = async (req, res, next) => {
     const publishedBootcamp = await Bootcamp.findOne({
       user: req.body.user
     });
-    console.log(publishedBootcamp);
     //if this user is publisher and belong him bootcamp he could't make another one
     if (publishedBootcamp && req.user.role !== 'admin') {
       return next(new ErrorHandler('The user already has the bootcamp', 400));
     }
+
+    //add the bootcamp to the database
     const bootcamp = await Bootcamp.create(req.body);
+    //response to the client side
     res.status(201).json({ success: true, bootcamp });
   } catch (error) {
     next(error);
@@ -63,16 +65,29 @@ const createBootcamp = async (req, res, next) => {
 //@access             private
 const updateBootcamp = async (req, res, next) => {
   try {
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+    let bootcamp = await Bootcamp.findById(req.params.id);
+
+    if (!bootcamp) {
+      return next(
+        new ErrorHandler(`bootcamp is not found by id ${req.params.id}`, 404)
+      );
+    }
+    //checking if the use is the owner of the bootcamp
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new ErrorHandler('only the owner of the bootcamp can Edit it', 403)
+      );
+    }
+
+    bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
 
-    if (!bootcamp) {
-      return next(new ErrorHandler(`bootcamp is not found by id ${_id}`, 404));
-    }
-
-    res.status(200).json(bootcamp);
+    res.status(200).json({
+      success: true,
+      data: bootcamp
+    });
   } catch (error) {
     next(err);
   }
@@ -88,6 +103,13 @@ const deleteBootcamp = async (req, res, next) => {
 
     if (!bootcamp) {
       return next(new ErrorHandler(`bootcamp is not found by id ${_id}`, 404));
+    }
+
+    //checking if the use is the owner of the bootcamp
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new ErrorHandler('only the owner of the bootcamp can Delete it', 403)
+      );
     }
 
     bootcamp.remove();
@@ -140,6 +162,13 @@ const uploadBootcampAvater = async (req, res, next) => {
     //if no file uploaded then =>
     if (!req.file) {
       return next(new ErrorHandler('please provide the image file', 400));
+    }
+
+    //checking if the use is the owner of the bootcamp
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new ErrorHandler('only the owner of the bootcamp can update it', 403)
+      );
     }
 
     bootcamp = await Bootcamp.findByIdAndUpdate(

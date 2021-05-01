@@ -51,12 +51,23 @@ const getCourse = asyncHandler(async (req, res, next) => {
 const createCourse = asyncHandler(async (req, res, next) => {
   //add bootcamp id to the object that i will use to add course
   req.body.bootcamp = req.params.bootcampId;
+  req.body.user = req.user.id;
 
   const bootcamp = await Bootcamp.findById(req.body.bootcamp);
   //check the bootcmap is exist or not
   if (!bootcamp) {
     return next(
       new errorHandler(`there is no bootcamp with id ${req.body.bootcamp}`, 400)
+    );
+  }
+
+  //check if the owner of the bootcamp is the user authinteceded
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new errorHandler(
+        `you are not the owner of the bootcamp, only the owner of the bootcmap can added courses to it`,
+        403
+      )
     );
   }
   //add some logical opperating to make sure you can't add two same courses
@@ -78,6 +89,16 @@ const deleteCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
+  //check if the owner of the course is the user authinteceded
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new errorHandler(
+        `you are not the owner of the course, only the owner of the course can delete it`,
+        403
+      )
+    );
+  }
+
   await course.remove(course);
 
   res.status(200).json({
@@ -85,6 +106,7 @@ const deleteCourse = asyncHandler(async (req, res, next) => {
     data: course
   });
 });
+
 //@desc           update specific course
 //route           UPDATE api/v1/courses/:id
 //access          Private
@@ -94,6 +116,16 @@ const updateCourse = asyncHandler(async (req, res, next) => {
   if (!course) {
     return next(
       new errorHandler(`The course not exist with id ${req.params.id}`, 400)
+    );
+  }
+
+  //check if the owner of the course is the user authinteceded
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new errorHandler(
+        `you are not the owner of the course, only the owner of the course can delete it`,
+        403
+      )
     );
   }
 

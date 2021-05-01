@@ -15,6 +15,7 @@ const protector = asyncHandler(async (req, res, next) => {
         token = req.cookies.token;
     } */
 
+  console.log(token);
   //if there is no token
   if (!token) {
     return next(new ErrorResponse('not authorize to access this route', 401));
@@ -23,9 +24,7 @@ const protector = asyncHandler(async (req, res, next) => {
   try {
     //verify jwt token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
     req.user = await User.findById(decoded._id);
-    console.log(req.user);
     next();
   } catch (err) {
     next(new ErrorResponse('not authorize to access this route', 401));
