@@ -10,51 +10,51 @@ const BootCampSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       maxlength: [50, 'The maximum length is 50 character'],
-      minlength: [5, `the min length is 5 character`]
+      minlength: [5, `the min length is 5 character`],
     },
     slug: String,
     description: {
       type: String,
       required: [true, 'the description is required'],
-      maxlength: [500, 'Description must be not greate than 500']
+      maxlength: [500, 'Description must be not greate than 500'],
     },
     website: {
       type: String,
       match: [
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
-        'the url is not valid'
-      ]
+        'the url is not valid',
+      ],
     },
     email: {
       type: String,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        'the email is not valid'
-      ]
+        'the email is not valid',
+      ],
     },
     phoneNumber: {
       type: String,
-      maxlength: [20, 'the phone number is not valied']
+      maxlength: [20, 'the phone number is not valied'],
     },
     address: {
       type: String,
-      required: [true, 'the address is required']
+      required: [true, 'the address is required'],
     },
     location: {
       type: {
         type: String,
-        enum: ['Point']
+        enum: ['Point'],
       },
       coordinates: {
         type: [Number],
-        index: '2dsphere' // i don't know any thing about
+        index: '2dsphere', // i don't know any thing about
       },
       formattedAddress: String,
       street: String,
       city: String,
       state: String,
       zipcode: String,
-      country: String
+      country: String,
     },
     careers: {
       type: [String],
@@ -65,51 +65,51 @@ const BootCampSchema = new mongoose.Schema(
         'UI/UX',
         'Data Science',
         'Business',
-        'Other'
-      ]
+        'Other',
+      ],
     },
     avarageRating: {
       type: Number,
       min: [1, 'the minmum rating is 1'],
-      max: [10, 'the maximum rating is 10']
+      max: [10, 'the maximum rating is 10'],
     },
     avarageCost: Number,
     photo: {
       type: String,
-      default: 'no-photo.jpg'
+      default: 'no-photo.jpg',
     },
     housing: {
       type: Boolean,
-      default: false
+      default: false,
     },
     jobAssistance: {
       type: Boolean,
-      default: false
+      default: false,
     },
     jobGuarantee: {
       type: Boolean,
-      default: false
+      default: false,
     },
     acceptGi: {
       type: Boolean,
-      default: false
+      default: false,
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
     },
     avgCost: {
-      type: Number
+      type: Number,
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      required: true
-    }
+      required: true,
+    },
   },
   {
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
   }
 );
 BootCampSchema.pre('save', function (next) {
@@ -127,7 +127,7 @@ BootCampSchema.pre('save', async function (next) {
     city: loc[0].city,
     state: loc[0].countryCode,
     zipcode: loc[0].zipcode,
-    country: loc[0].country
+    country: loc[0].country,
   };
   this.address = undefined;
   next();
@@ -138,7 +138,7 @@ BootCampSchema.virtual('courses', {
   ref: 'Course',
   localField: '_id',
   foreignField: 'bootcamp',
-  justOne: false
+  justOne: false,
 });
 
 BootCampSchema.pre('remove', async function (next) {

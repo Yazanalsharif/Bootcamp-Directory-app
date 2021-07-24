@@ -3,6 +3,7 @@ const User = require('../models/users');
 const asyncHanlder = require('../middlewares/async');
 const sendMail = require('../utils/sendMessage');
 const crypto = require('crypto');
+const asyncHandler = require('../middlewares/async');
 
 //@desc             register new user
 //@route            POST /api/v1/auth/register
@@ -14,7 +15,7 @@ const register = asyncHanlder(async (req, res, next) => {
     name,
     email,
     password,
-    role
+    role,
   });
   //get token from method schema
   sendTokenResponse(user, 200, res);
@@ -54,7 +55,7 @@ const getMe = asyncHanlder(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   res.status(200).json({
     success: true,
-    data: user
+    data: user,
   });
 });
 
@@ -85,7 +86,7 @@ const forgetPassword = asyncHanlder(async (req, res, next) => {
     const option = {
       to: user.email,
       subject: 'forget Password',
-      text: message
+      text: message,
     };
 
     //call sendMail function
@@ -93,13 +94,13 @@ const forgetPassword = asyncHanlder(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: 'The Email is Sent, Please Check your Email to reset the password '
+      data: 'The Email is Sent, Please Check your Email to reset the password ',
     });
   } catch (err) {
     user.resetToken = undefined;
     user.resetExpire = undefined;
     await user.save({ validateBeforeSave: false });
-
+    console.log(err);
     return next(
       new errorHandler("the server Could't send an email to this user", 500)
     );
@@ -116,7 +117,7 @@ const updatePassword = asyncHanlder(async (req, res, next) => {
   //get the user by using reset token password
   const user = await User.findOne({
     resetPasswordToken: token,
-    resetPasswordExpire: { $gte: Date.now() }
+    resetPasswordExpire: { $gte: Date.now() },
   });
 
   if (!user) {
@@ -130,8 +131,31 @@ const updatePassword = asyncHanlder(async (req, res, next) => {
   await user.save();
   sendTokenResponse(user, 200, res);
 });
+
+//@desc             clear cookies after logout
+//@route            get /api/v1/auth/logout
+//@accress          Public
+const logout = asyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    msg: 'the account loged out',
+    data: {},
+  });
+});
 //import the controllers function
-module.exports = { register, login, getMe, forgetPassword, updatePassword };
+module.exports = {
+  register,
+  login,
+  getMe,
+  forgetPassword,
+  updatePassword,
+  logout,
+};
 
 //internal function to set Cookies in the header
 const sendTokenResponse = (user, statusCode, res) => {
@@ -143,7 +167,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXP * 24 * 60 * 60 * 1000
     ),
-    secure: false
+    secure: false,
   };
 
   //if the app on production env will use cookie for https
@@ -153,6 +177,6 @@ const sendTokenResponse = (user, statusCode, res) => {
   //send response to the client side
   res.status(statusCode).cookie('token', token, options).json({
     success: true,
-    token
+    token,
   });
 };

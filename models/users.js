@@ -7,36 +7,36 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'please enter your name'],
-    trim: true
+    trim: true,
   },
   email: {
     type: String,
     trim: true,
     match: [
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      'please enter valid email'
+      'please enter valid email',
     ],
     unique: true,
-    required: [true, 'please enter your email address']
+    required: [true, 'please enter your email address'],
   },
   role: {
     type: String,
     enum: ['user', 'publisher'],
-    default: 'user'
+    default: 'user',
   },
   password: {
     // make some of validation to the password alphnumberic
     type: String,
-    minlength: 7,
+    minlength: 6,
     required: [true, 'please enter your password'],
-    select: false
+    select: false,
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {
     type: Date,
-    default: Date.now()
-  }
+    default: Date.now(),
+  },
 });
 
 UserSchema.pre('save', async function (next) {
@@ -49,7 +49,7 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.methods.getSignToken = function () {
   const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXP
+    expiresIn: process.env.JWT_EXP,
   });
   return token;
 };

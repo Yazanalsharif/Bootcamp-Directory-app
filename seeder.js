@@ -11,7 +11,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useFindAndModify: false,
-  useCreateIndex: true
+  useCreateIndex: true,
 });
 
 //get data from files
@@ -24,10 +24,15 @@ const courses = JSON.parse(
 const users = JSON.parse(
   fs.readFileSync(`${__dirname}/data/users.json`, 'utf-8')
 );
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/data/reviews.json`, 'utf-8')
+);
+
 //bring models
 const Bootcamp = require('./models/bootcamps');
 const Course = require('./models/courses');
 const User = require('./models/users');
+const Review = require('./models/Review');
 
 //import data from json files
 const importdata = async () => {
@@ -35,6 +40,7 @@ const importdata = async () => {
     await Bootcamp.create(bootcamps);
     await Course.create(courses);
     await User.create(users);
+    await Review.create(reviews);
     console.log(chalk.green.bold('the data imported'));
     process.exit();
   } catch (error) {
@@ -47,6 +53,7 @@ const deletData = async () => {
     await Bootcamp.deleteMany({});
     await Course.deleteMany({});
     await User.deleteMany({});
+    await Review.deleteMany({});
     console.log(chalk.red.bold(`the data is deleted`));
     process.exit();
   } catch (error) {

@@ -8,7 +8,7 @@ const {
   updateUser,
   deleteUser,
   updatePassword,
-  updateDetails
+  updateDetails,
 } = require('../controller/users');
 
 //middlewares
@@ -27,6 +27,7 @@ router.route('/updateDetails').put(updateDetails);
 
 //user authorized middleware in every route used by the admin only
 router.use(authorized('admin'));
+
 //route the controllers funcitons that will executed by the admin
 router.route('/:id').get(getUserById).put(updateUser).delete(deleteUser);
 

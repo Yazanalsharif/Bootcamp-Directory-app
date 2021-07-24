@@ -11,15 +11,15 @@ const sendMessage = async (option) => {
     secure: false,
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD
-    }
+      pass: process.env.SMTP_PASSWORD,
+    },
   });
 
   const message = {
     from: process.env.FROM_EMAIL + `<${process.env.FROM_EMAIL}>`,
     to: option.to,
     subject: option.subject,
-    text: option.text
+    text: option.text,
   };
 
   const info = await transporter.sendMail(message);

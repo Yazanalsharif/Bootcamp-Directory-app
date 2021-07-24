@@ -11,14 +11,19 @@ const protector = asyncHandler(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } /* else if(req.cookies.token) {
-        token = req.cookies.token;
-    } */
+  } else if (req.cookies.token) {
+    token = req.cookies.token;
+  }
 
   console.log(token);
   //if there is no token
   if (!token) {
-    return next(new ErrorResponse('not authorize to access this route', 401));
+    return next(
+      new ErrorResponse(
+        'not authorize to access this route please login and try again',
+        401
+      )
+    );
   }
 
   try {
@@ -27,6 +32,7 @@ const protector = asyncHandler(async (req, res, next) => {
     req.user = await User.findById(decoded._id);
     next();
   } catch (err) {
+    console.log(err.message);
     next(new ErrorResponse('not authorize to access this route', 401));
   }
 });

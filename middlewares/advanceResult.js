@@ -5,12 +5,11 @@ const advanceResult = (model, populate) => async (req, res, next) => {
 
   //remove fields becouse it does't must match with decouments
   const removeFields = ['select', 'sort', 'limit', 'page'];
-  console.log(queryStringClone);
+
   //loops for remove the fields
   removeFields.forEach((param) => {
     delete queryStringClone[param];
   });
-  console.log(queryStringClone);
   //stringify the json to string to make some edits
   let queryStr = JSON.stringify(queryStringClone);
 
@@ -64,14 +63,14 @@ const advanceResult = (model, populate) => async (req, res, next) => {
   if (startIndex > 0) {
     pagination.previous = {
       page: page - 1,
-      limit
+      limit,
     };
   }
   //handle next pages
   if (endIndex < docuCount) {
     pagination.next = {
       page: page + 1,
-      limit
+      limit,
     };
   }
 
@@ -79,7 +78,7 @@ const advanceResult = (model, populate) => async (req, res, next) => {
     success: true,
     count: results.length,
     pagination,
-    data: results
+    data: results,
   };
 
   next();

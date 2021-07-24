@@ -5,7 +5,7 @@ const errorHandler = (err, req, res, next) => {
   error.message = err.message;
   //mongoose error for object Id AND casting errors
   if (err.name === 'CastError') {
-    let message = `bootcamp is not found by id ${error.value}`;
+    let message = `The Resourse is not found by id ${error.value}`;
     error = new ErrorResponse(message, 404);
   }
   //mongoose error duplicated
@@ -24,7 +24,7 @@ const errorHandler = (err, req, res, next) => {
   //return errors message and status code with errors
   res.status(error.statusCode || 500).json({
     success: false,
-    errorMessage: error.message || 'Server Error'
+    errorMessage: error.message || 'Server Error',
   });
 };
 

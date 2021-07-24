@@ -4,7 +4,8 @@ const {
   login,
   getMe,
   forgetPassword,
-  updatePassword
+  updatePassword,
+  logout,
 } = require('../controller/auth.js');
 
 const router = express.Router();
@@ -15,6 +16,8 @@ const { protector } = require('../middlewares/auth');
 router.route('/register').post(register);
 
 router.route('/login').post(login);
+
+router.route('/logout').get(logout);
 
 router.route('/me').get(protector, getMe);
 

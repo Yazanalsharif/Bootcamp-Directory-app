@@ -3,6 +3,7 @@ const bootcampController = require('../controller/bootcamps');
 
 //include other resource routers
 const courses = require('./courses');
+const reviews = require('./review');
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const Bootcamp = require('../models/bootcamps');
 
 // re-route into other resource routes
 router.use('/:bootcampId/courses', courses);
-
+router.use('/:bootcampId/reviews', reviews);
 //route to upload the avater to the bootcamp
 router
   .route('/upload/:id')
