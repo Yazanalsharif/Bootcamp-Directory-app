@@ -63,12 +63,12 @@ app.use(hpp());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100
+  max: 100,
 });
 
 //@desc       get the logger data from the user in dev env
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev')),
+  app.use(morgan('dev'));
 }
 
 //handling path in public
